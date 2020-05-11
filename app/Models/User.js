@@ -1,5 +1,7 @@
 'use strict'
 
+const { uuid } = require('uuidv4')
+
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model')
 
@@ -17,6 +19,7 @@ class User extends Model {
     this.addHook('beforeSave', async (userInstance) => {
       if (userInstance.dirty.password) {
         userInstance.password = await Hash.make(userInstance.password)
+        userInstance.id_public = uuid()
       }
     })
   }

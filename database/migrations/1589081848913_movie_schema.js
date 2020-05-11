@@ -7,6 +7,7 @@ class MovieSchema extends Schema {
   up() {
     this.create('movies', (table) => {
       table.increments()
+      table.uuid('id_public').index()
       table.string('title').notNullable()
       table.string('sinopse', 500)
       table

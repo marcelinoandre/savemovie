@@ -1,5 +1,7 @@
 'use strict'
 
+const Genre = use('App/Models/Genre')
+
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
@@ -17,19 +19,8 @@ class GenreController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-  }
-
-  /**
-   * Render a form to be used for creating a new genre.
-   * GET genres/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+  async index({ auth, request }) {
+    return Genre.all()
   }
 
   /**
@@ -40,7 +31,11 @@ class GenreController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
+    const data = request.only(['title'])
+    const genre = Genre.create(data)
+
+    return genre
   }
 
   /**
@@ -52,19 +47,12 @@ class GenreController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
+  async show({ params, response }) {
+    const genre = await Genre.findBy('id_public', params.id)
 
-  /**
-   * Render a form to update an existing genre.
-   * GET genres/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+    if (!genre) return response.status(401).json({ error: 'Genre not found.' })
+
+    return genre
   }
 
   /**
@@ -75,7 +63,18 @@ class GenreController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
+    const genre = await Genre.findBy('id_public', params.id)
+
+    if (!genre) return response.status(401).json({ error: 'Genre not found.' })
+
+    const data = request.only(['title'])
+
+    genre.merge(data)
+
+    await genre.save()
+
+    return genre
   }
 
   /**
@@ -86,8 +85,7 @@ class GenreController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
-  }
+  async destroy({ params, request, response }) {}
 }
 
 module.exports = GenreController
