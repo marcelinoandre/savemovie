@@ -22,12 +22,12 @@ class UserController {
   }
 
   async show({ params }) {
-    const user = User.find(params.id)
+    const user = User.findBy('id_public', params.id)
     return user
   }
 
   async update({ params, request, response }) {
-    const user = await User.find(params.id)
+    const user = await User.findBy('id_public', params.id)
 
     if (!user) return response.status(401).json({ error: 'User not found' })
 
@@ -40,7 +40,7 @@ class UserController {
   }
 
   async destroy({ params, response }) {
-    const user = await User.find(params.id)
+    const user = await User.findBy('id_public', params.id)
 
     if (!user) return response.status(401).json({ error: 'User not found' })
 

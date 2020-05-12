@@ -20,8 +20,14 @@ Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
 })
 
-Route.resource('/users', 'UserController').apiOnly()
+Route.post('/sessions', 'SessionController.store')
 
-Route.resource('/genres', 'GenreController').apiOnly()
+Route.post('/users', 'UserController.store')
 
-Route.resource('/movies', 'MovieController').apiOnly()
+Route.group(() => {
+  Route.resource('/users', 'UserController').apiOnly().except(['store'])
+
+  Route.resource('/genres', 'GenreController').apiOnly()
+
+  Route.resource('/movies', 'MovieController').apiOnly()
+}).middleware(['auth'])
