@@ -9,27 +9,14 @@ const Movie = use('App/Models/Movie')
  * Resourceful controller for interacting with movies
  */
 class MovieController {
-  /**
-   * Show a list of all movies.
-   * GET movies
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index({ request, response, view }) {
-    return await Movie.all()
+  async index({ auth }) {
+    const movies = await Movie.query()
+      .where('user_id', auth.user.id)
+      .with('genre')
+      .fetch()
+    return movies
   }
 
-  /**
-   * Create/save a new movie.
-   * POST movies
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async store({ request, response }) {
     const data = request.only(['title', 'sinopse', 'genre_id', 'watched_flag'])
     data.user_id = 1
@@ -38,36 +25,47 @@ class MovieController {
     return movie
   }
 
-  /**
-   * Display a single movie.
-   * GET movies/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show({ params, request, response, view }) {}
+  async show({ params, request, response, auth }) {
+    const movie = await Movie.query()
+      .where('user_id', auth.user.id)
+      .where('id_public', params.id)
+      .with('genre')
+      .first()
 
-  /**
-   * Update movie details.
-   * PUT or PATCH movies/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update({ params, request, response }) {}
+    if (!movie) return response.status(401).json({ error: 'Movie not found.' })
 
-  /**
-   * Delete a movie with id.
-   * DELETE movies/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy({ params, request, response }) {}
+    return movie
+  }
+
+  async update({ params, request, response, auth }) {
+    const movie = await Movie.query()
+      .where('user_id', auth.user.id)
+      .where('id_public', params.id)
+      .first()
+
+    if (!movie) return response.status(401).json({ error: 'Movie not found.' })
+
+    const data = request.only(['title', 'sinopse', 'genre_id'])
+
+    movie.merge(data)
+
+    await movie.save()
+
+    return movie
+  }
+
+  async destroy({ params, response, auth }) {
+    const movie = await Movie.query()
+      .where('user_id', auth.user.id)
+      .where('id_public', params.id)
+      .first()
+
+    if (!movie) return response.status(401).json({ error: 'Movie not found.' })
+
+    await movie.delete()
+
+    return response.send()
+  }
 }
 
 module.exports = MovieController

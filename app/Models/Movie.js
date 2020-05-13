@@ -13,6 +13,14 @@ class Movie extends Model {
       movieInstance.id_public = uuid()
     })
   }
+
+  user() {
+    return this.belongsTo('App/Models/User')
+  }
+
+  genre() {
+    return this.belongsTo('App/Models/Genre')
+  }
 }
 
 module.exports = Movie

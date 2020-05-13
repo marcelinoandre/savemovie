@@ -9,7 +9,7 @@ class GenreSchema extends Schema {
       table.increments()
       table.uuid('id_public').index().notNullable()
       table.string('title').notNullable()
-      table.integer('user_id')
+      table.integer('user_id').notNullable()
       table.timestamps()
     })
   }

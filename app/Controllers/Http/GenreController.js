@@ -20,7 +20,8 @@ class GenreController {
    * @param {View} ctx.view
    */
   async index({ auth, request }) {
-    return Genre.all()
+    const genres = await Genre.query().where('user_id', auth.user.id).fetch()
+    return genres
   }
 
   /**
@@ -31,8 +32,9 @@ class GenreController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store({ request, response }) {
+  async store({ request, auth }) {
     const data = request.only(['title'])
+    data.user_id = auth.user.id
     const genre = Genre.create(data)
 
     return genre
@@ -47,8 +49,12 @@ class GenreController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, response }) {
-    const genre = await Genre.findBy('id_public', params.id)
+  async show({ params, response, auth }) {
+    // const genre = await Genre.findBy('id_public', params.id).findBy( 'user_id', 1)
+    const genre = await Genre.query()
+      .where('user_id', auth.user.id)
+      .where('id_public', params.id)
+      .first()
 
     if (!genre) return response.status(401).json({ error: 'Genre not found.' })
 
@@ -63,8 +69,11 @@ class GenreController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, response }) {
-    const genre = await Genre.findBy('id_public', params.id)
+  async update({ params, request, response, auth }) {
+    const genre = await Genre.query()
+      .where('user_id', auth.user.id)
+      .where('id_public', params.id)
+      .first()
 
     if (!genre) return response.status(401).json({ error: 'Genre not found.' })
 
@@ -85,7 +94,18 @@ class GenreController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, request, response }) {}
+  async destroy({ params, auth, response }) {
+    const genre = await Genre.query()
+      .where('user_id', auth.user.id)
+      .where('id_public', params.id)
+      .first()
+
+    if (!genre) return response.status(401).json({ error: 'Genre not found.' })
+
+    await genre.delete()
+
+    return response()
+  }
 }
 
 module.exports = GenreController
