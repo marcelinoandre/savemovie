@@ -1,23 +1,24 @@
-# Adonis API application
+# Save Movie
 
-This is the boilerplate for creating an API server in AdonisJs, it comes pre-configured with.
+Projeto realizado durante realização de um curso a cerca do AnonisJS na Udemy.
 
-1. Bodyparser
-2. Authentication
-3. CORS
-4. Lucid ORM
-5. Migrations and seeds
+## Escopo
 
-## Setup
+Disponibilizar um serviço pelo qual o usuário poderá cadastrar filmes que deseja assistir com as seguites informações (título*, gênero, sinopse*)
 
-Use the adonis command to install the blueprint
+## Funcionalidades
 
-```bash
-adonis new yardstick --api-only
-```
+O **usuário** poderá criar seu cadastro, e estando logado poderá inserir, editar seus dados(exceto email), visualizar e excluir filmes ou gêneros criados por ele.
 
-or manually clone the repo and then run `npm install`.
+Uma ves que o filme esteja cadastrado o usuário poderá marcar o filme como assistido ou para assistir.
 
+## Entidades
+
+![Alt text](img-docs/entidades.png?raw=true 'Entidades')
+
+## Modelagem Banco de dados
+
+![](img-docs/mer.png)
 
 ### Migrations
 
@@ -26,3 +27,9 @@ Run the following command to run startup migrations.
 ```js
 adonis migration:run
 ```
+
+```bash
+yarn install
+```
+
+or manually clone the repo and then run `npm install`
