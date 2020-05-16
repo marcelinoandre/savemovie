@@ -25,11 +25,14 @@ Route.post('/sessions', 'SessionController.store')
 Route.post('/users', 'UserController.store')
 
 Route.group(() => {
+  Route.put(
+    '/watched-update-flag/:id/movies',
+    'MovieUpWatchedFlagController.update'
+  )
+
   Route.resource('/users', 'UserController').apiOnly().except(['store'])
 
   Route.resource('/genres', 'GenreController').apiOnly()
 
   Route.resource('/movies', 'MovieController').apiOnly()
-
-  Route.put('/watched-flag/:id/movies', 'UpdateWatchedFlagController.update')
 }).middleware(['auth'])

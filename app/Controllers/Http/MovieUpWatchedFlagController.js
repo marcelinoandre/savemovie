@@ -1,26 +1,26 @@
 'use strict'
+
 const Movie = use('App/Models/Movie')
 
-class UpdateWatchedFlatController {
+class MovieUpWatchedFlagController {
   async update({ params, request, response, auth }) {
     const movie = await Movie.query()
       .where('user_id', auth.user.id)
       .where('id_public', params.id)
       .first()
 
-    return console.log(movie.lenght, 'mo ie')
-
     if (!movie) return response.status(401).json({ error: 'Movie not found.' })
 
-    const data = request.only(['title', 'sinopse', 'genre_id'])
+    const { watched_flag } = request.all()
 
-    movie.merge(data)
-    console.log(data)
+    movie.merge({ watched_flag })
 
     await movie.save()
 
-    return { ok: 'ola' }
+    // return movie
+
+    return movie
   }
 }
 
-module.exports = UpdateWatchedFlatController
+module.exports = MovieUpWatchedFlagController
