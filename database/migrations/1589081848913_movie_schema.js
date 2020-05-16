@@ -9,7 +9,7 @@ class MovieSchema extends Schema {
       table.increments()
       table.uuid('id_public').index()
       table.string('title').notNullable()
-      table.string('sinopse', 500)
+      table.string('sinopse', 500).notNullable()
       table
         .integer('genre_id')
         .unsigned()

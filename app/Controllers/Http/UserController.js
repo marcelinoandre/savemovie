@@ -21,17 +21,23 @@ class UserController {
     return user
   }
 
-  async show({ params }) {
-    const user = User.findBy('id_public', params.id)
-    return user
-  }
-
-  async update({ params, request, response }) {
+  async show({ params, response }) {
     const user = await User.findBy('id_public', params.id)
 
     if (!user) return response.status(401).json({ error: 'User not found' })
 
-    const data = request.only(['name'])
+    return user
+  }
+
+  async update({ params, request, response, auth }) {
+    const user = await User.query()
+      .where('id', auth.user.id)
+      .where('id_public', params.id)
+      .first()
+
+    if (!user) return response.status(401).json({ error: 'User not found' })
+
+    const data = request.only(['name', 'password'])
 
     user.merge(data)
     await user.save(data)
@@ -39,8 +45,11 @@ class UserController {
     return user
   }
 
-  async destroy({ params, response }) {
-    const user = await User.findBy('id_public', params.id)
+  async destroy({ params, response, auth }) {
+    const user = await User.query()
+      .where('id', auth.user.id)
+      .where('id_public', params.id)
+      .first()
 
     if (!user) return response.status(401).json({ error: 'User not found' })
 

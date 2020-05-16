@@ -19,6 +19,10 @@ class User extends Model {
     this.addHook('beforeSave', async (userInstance) => {
       if (userInstance.dirty.password) {
         userInstance.password = await Hash.make(userInstance.password)
+      }
+    })
+    this.addHook('beforeCreate', async (userInstance) => {
+      if (userInstance.dirty.password) {
         userInstance.id_public = uuid()
       }
     })
