@@ -17,9 +17,14 @@ class MovieController {
     return movies
   }
 
-  async store({ request, response }) {
+  async store({ request, response, auth }) {
     const data = request.only(['title', 'sinopse', 'genre_id', 'watched_flag'])
-    data.user_id = 1
+
+    const flWatched = data.watched_flag ? true : false
+
+    data.watched_flag = flWatched
+
+    data.user_id = auth.user.id
     const movie = Movie.create(data)
 
     return movie

@@ -30,4 +30,6 @@ Route.group(() => {
   Route.resource('/genres', 'GenreController').apiOnly()
 
   Route.resource('/movies', 'MovieController').apiOnly()
+
+  Route.put('/watched-flag/:id/movies', 'UpdateWatchedFlagController.update')
 }).middleware(['auth'])
